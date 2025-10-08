@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-
-def calculate():
-    x = 1
-    y = 2
-    return x
+from django.core.exceptions import ObjectDoesNotExist
+from store.models import Customer, OrderItem, Product
 
 
 def say_hello(request):
-    x = calculate()
-    return render(request, 'hello.html', {'name': 'Abhishek'})
+    queryset = Customer.objects.filter(first_name__istartswith='h')
+    # queryset = OrderItem.objects.values('product_id__title').order_by('product_id__title')
+
+    # order_queryset = OrderItem.objects.values('product_id').distinct()
+    # queryset = Product.objects.filter(id__in=order_queryset).order_by('title')
+    return render(request, 'hello.html', {'name': 'Abhishek', 'customers': list(queryset)})
+
