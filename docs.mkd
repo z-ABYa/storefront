@@ -1,0 +1,63 @@
+## To create a new project 
+""django-admin startproject storefront .""
+
+"django-admin" provides us with many commands
+but going f/w we'll use -
+"python manage.py" 
+command as it takes into account the setting of our project too.
+
+## Creating an APP in the project
+"python3 manage.py startapp playground"
+
+Structure of an application-
+playground
+    |--migrations.py (stores DB queries)
+    |--admin.py (describes how the admin panel for the app is going to look like)
+    |--app.py (config. file)
+    |--models.py (Here we use mmodel classes to pull out data from DB)
+    |--tests.py (for creating tests to save time)
+    |--views.py (view fn that takes a request and returns a response[request handler])
+
+Now, after creating an app we need to register it into our project's settings.py in INSTALLED_APPS 'playground'
+
+## Configuring URLs
+We also create a "urls.py" (just convention naming) file in our app for URL config.-
+    -we import views "from . import views" and path "from django.url import path"
+    -and create a list "urlpatterns" (required) in which we specify which view[request] are to be loaded for a particular url page.
+
+Now we need to tell django to look for urls for a particular app in the urls.py we just created inside app directory. We do this by adding this in the main dir.'s urls.py file in urlpatterns- 
+    "path('playground/', include('playground.urls'))"
+    
+    what this will do is chop of the "playground" from the original url and look for the rest in the 'playground.urls' file that we just included
+
+
+
+## Migrations
+we use "python manage.py makemigrations" to change the classes that we make in models.py file(s) and convert it to python code.
+
+After that we use command "python manage.py migrate" to execute the migration files made by django. Django converts those code to sql queries to make database schemas. 
+
+
+## Database setup
+Install mysqlclient using pip and change default DATABASE settings to [for development server]:
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'storefront',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': '<your_password>'
+    } 
+}
+
+then apply the migrations (if any) to the newly created mysql DB by running "python manage.py migrate"
+
+
+## Django ORM (Object Relational Mapper)
+In django we get an ORM that is used to get results from a DB without writing any query. 
+EX- 
+    "query_set = Product.objects.all()" [Product is inherited from models.Model which is part of ORM]
+    gives us a query set for getting all the entries in the Product table but not the result (a list of products) itself.
+    It is when we, for eg. iterate over the query set we get the result (this is when the query itself is executed)
+    some other scenarios when query is executed - list(query_set), query_set[0], query_set[:5]
+
