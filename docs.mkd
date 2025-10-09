@@ -6,6 +6,7 @@ but going f/w we'll use -
 "python manage.py" 
 command as it takes into account the setting of our project too.
 
+
 ## Creating an APP in the project
 "python3 manage.py startapp playground"
 
@@ -19,6 +20,7 @@ playground
     |--views.py (view fn that takes a request and returns a response[request handler])
 
 Now, after creating an app we need to register it into our project's settings.py in INSTALLED_APPS 'playground'
+
 
 ## Configuring URLs
 We also create a "urls.py" (just convention naming) file in our app for URL config.-
@@ -61,3 +63,22 @@ EX-
     It is when we, for eg. iterate over the query set we get the result (this is when the query itself is executed)
     some other scenarios when query is executed - list(query_set), query_set[0], query_set[:5]
 
+### Some query methods
+1. That return a queryset
+    * all() - Returns a query for all the entries in the table
+    * filter() - Returns a new QuerySet containing objects that match the given lookup parameters.
+    * values() - Returns only the specified fields - dictionary form. (eg. values("id", "title"))
+    * order_by() - eg. order_by("-pub_date", "headline")
+    * select_related() - this is used when getting a related field in another table.
+        eg. if you want to render product.collection.id in template and you use:
+            q = Product.objects.all()
+        this in itself is fine but when you want to show the collection id in a for-loop it will run a query seperately for each product_id there we use:
+            Product.objects.select_related('collection').all()
+        This ensures making a QuerySet object of both the table before sending the query.
+        When it has 1 instance.(a products has only 1 collection)
+    * prefetch_releted() - similar to select_related() but instance are many (n) 
+
+
+2. That does not return a queryset (They query the database each time they’re called.)
+    get() - for a specific condition (eg. id=1)
+    count() - returns count of objects related to provided cond. (eg. count('*'))
