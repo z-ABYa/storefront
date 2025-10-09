@@ -10,5 +10,7 @@ def say_hello(request):
 
     # order_queryset = OrderItem.objects.values('product_id').distinct()
     # queryset = Product.objects.filter(id__in=order_queryset).order_by('title')
-    return render(request, 'hello.html', {'name': 'Abhishek', 'customers': list(queryset)})
+
+    q = Customer.objects.only('first_name', 'membership')
+    return render(request, 'hello.html', {'name': 'Abhishek', 'customers': list(q)})
 
