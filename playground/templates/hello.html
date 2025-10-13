@@ -7,8 +7,8 @@
         {% endif %}
         
         <ul>
-            {% for customer in customers %}
-            <li>{{customer.first_name}}, ({{customer.phone}})</li>
+            {% for order_item in order_items %}
+            <li>{{order_item.product.customer.first_name}}, ({{order_item.product.title}})</li>
             {% endfor %}
         </ul>
 
