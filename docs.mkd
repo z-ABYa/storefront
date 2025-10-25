@@ -12,10 +12,10 @@ command as it takes into account the setting of our project too.
 
 Structure of an application-
 playground
-    |--migrations.py (stores DB queries)
+    |--migrations dir (stores DB queries)
     |--admin.py (describes how the admin panel for the app is going to look like)
     |--app.py (config. file)
-    |--models.py (Here we use mmodel classes to pull out data from DB)
+    |--models.py (Here we use model classes to pull out data from DB)
     |--tests.py (for creating tests to save time)
     |--views.py (view fn that takes a request and returns a response[request handler])
 
