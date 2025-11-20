@@ -95,8 +95,8 @@ Similarly, an API defines 'end points' like: `/products`, `/orders`, `/cart` etc
 But what make an API restful?
 REST (REpresentational State Transfer) defines a bunch of rules for communication of client and server over the web. Following these make systems - fast, reliable, scalable.
 
-Major concepts of REST-
-## 1. Resources
+## 3 Major concepts of REST
+### 1. Resources
 A resource is like an object in our applicaiton like - `Product`, `Collection`, etc. Now, these resources are available on the web and client applications can access it through URLs(Uniform Resource Locator)
 Eg. -
 http://buy.com/products
@@ -106,7 +106,7 @@ http://buy.com/products/reviews/1
 
 As we can see all these URls are consistant, that is an attribute of RESTful APIs
 
-## 2. Resources Representation
+### 2. Resources Representation
 Now we have a resource, located at a certain URL and the server is going to return a representation of that resource. It can return - HTML, XML or JSON. But none of these are internal representation of data on the server. On the server, we identify a resource by an object or instance of a class. 
 
 Mostly used notation is JSON (JavaScript Object Notation). So in JSON an object is represented by a pair of curly braces, eg.
@@ -118,7 +118,7 @@ Mostly used notation is JSON (JavaScript Object Notation). So in JSON an object 
     "interests": []
 }
 
-## 3. HTTP Methods
+### 3. HTTP Methods
     |-- GET - for getting a resource(s)
     |-- POST - for creating a resource(s)
     |-- PUT - for updating a resource(s)
@@ -146,3 +146,13 @@ Example scenarios-
 3. Deleting a Product:
     `DELETE /products/1`
     (Note - we do not need anything in the body of the DELETE req., as the id is already present in the URL.)
+
+
+## Serializers
+It converts a python object or a model instance to a dictionary, like the Product object to a python dictionary. Then, behind the scenes- this serializer is passed to JSONRenderer which finally converts this to a JSON object. Analogy:
+
+    serializer(takes:model instance or queryset) -> JSON object
+
+For Serializing we have to make a new file 'serializers.py' and then create a serializer class of the object you want to serialize, like - `ProductSerializer` (for `Product` model) and in this include the fields(of `Product`) you want in JSON response.
+
+Finally, pass sesrializer.data in your response.
