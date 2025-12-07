@@ -148,11 +148,39 @@ Example scenarios-
     (Note - we do not need anything in the body of the DELETE req., as the id is already present in the URL.)
 
 
+
 ## Serializers
-It converts a python object or a model instance to a dictionary, like the Product object to a python dictionary. Then, behind the scenes- this serializer is passed to JSONRenderer which finally converts this to a JSON object. Analogy:
+It converts a python object or a model instance to a dictionary, like the Product object to a python dictionary. Then, behind the scenes- this serializer is passed to JSONRenderer which finally converts this to a JSON object. 
+Analogy:
+    serializer(takes:model instance or queryset) -> JSON object (while using i.e., in `views.py`)
 
-    serializer(takes:model instance or queryset) -> JSON object
+For Serializing,
+> Make a new file `serializers.py` 
+> In this, create a serializer class of the object you want to serialize (`ProductSerializer` for `Product`)
+eg:     `class ProductSerializer(serializers.Serializer)`
 
-For Serializing we have to make a new file 'serializers.py' and then create a serializer class of the object you want to serialize, like - `ProductSerializer` (for `Product` model) and in this include the fields(of `Product`) you want in JSON response.
+> In this class include the fields (of `Product`) you want in the JSON response.
+> In `views.py` instantiate this class with a model instance or a queryset
+eg:     `serializer = ProductSerializer(product)`
 
-Finally, pass sesrializer.data in your response.
+> Finally, pass serializer.data in your response.
+eg:     `return Response(serializer.data)`
+
+
+* eg. Inside of `ProductSerializer` the `collection` field can be represented in multiple ways: 
+...
+`queryset = Collection.objects.all()`
+1. `collection = serializers.PrimaryKeyRelatedField(queryset)` -> serializes as PK
+2. `collection = serializers.StringRelatedField()` -> serializes as string representation of Collection
+simply creating another serializer `CollectionSerializer` which has some fields of itself like `id` & `title`
+3. `collection = CollectionSerializer()` -> serializes as an object itself
+4. `collection = serializers.HyperlinkedRelatedField(queryset, view_name = 'collection-detail')` -> gives a link to Collection object
+...
+
+
+* But, manually defining all the fields is redundant and bad practice, as this duplicates our code. Because we have already defined our fields in the `models.py` file, and if we ever wish to change their validation type we have to redifine them in `serializers.py` too!
+
+So, instead we use `ModelSerializer`
+eg:
+    `class ProductSerializer(serializers.ModelSerializer)`
+    
