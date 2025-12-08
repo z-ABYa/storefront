@@ -15,21 +15,12 @@ def product_list(request):
     elif request.method == 'POST':
         serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
-        return Response('ok')
+        serializer.save()
+        return Response(serializer.data)
         
 
 @api_view()
 def product_details(request, id):
-    # Longer method*
-    # try:
-    #     product = Product.objects.get(pk=id)
-    #     serializer = ProductSerializer(product)
-    #     return Response(serializer.data)
-    # except Product.DoesNotExist:
-    #     return Response(status=status.HTTP_404_NOT_FOUND)
-
-    # Using django shortcuts*
     product = get_object_or_404(Product, pk=id)
     serializer = ProductSerializer(product)
     return Response(serializer.data)
