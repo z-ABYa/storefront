@@ -150,7 +150,7 @@ Example scenarios-
 
 
 ## Serializers
-It converts a python object or a model instance to a dictionary, like the Product object to a python dictionary. Then, behind the scenes- this serializer is passed to JSONRenderer which finally converts this to a JSON object. 
+It converts a python object or a model instance to a dictionary, like the Product object to a python dictionary. Then, behind the scenes- this serializer is passed to JSONRenderer which finally converts this to a JSON object. [Used for getting the data from server GET request]
 Analogy:
     serializer(takes:model instance or queryset) -> JSON object (while using i.e., in `views.py`)
 
@@ -183,4 +183,18 @@ simply creating another serializer `CollectionSerializer` which has some fields 
 So, instead we use `ModelSerializer`
 eg:
     `class ProductSerializer(serializers.ModelSerializer)`
-    
+
+
+## Deserializing
+It is used to store the JSON object into the internal representation used by the server to store the data. [Used in PUT/PATCH request.]
+For deserializing, we use the same serializer class for which we used to serializer the data.
+> create serializer with parameter `data = request.data`
+eg:     `serializer = ProductSerializer(product, data=request.data)`
+
+> check for validity of the data
+eg:     `serializer.is_valid(raise_exception=True)`
+
+> save the data 
+eg:      `serializer.save()`
+        
+> return a suitable response at the end.
