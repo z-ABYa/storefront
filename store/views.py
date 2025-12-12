@@ -2,7 +2,7 @@ from django.db.models.aggregates import Count
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -17,24 +17,16 @@ class ProductList(ListCreateAPIView):
     def get_serializer_context(self):
         return {'request': self.request}
 
-class ProductDetail(APIView):
-    def get(self, request, id):
-        product = get_object_or_404(Product, pk=id)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
-    
-    def put(self, request, id):
-        product = get_object_or_404(Product, pk=id)
-        serializer = ProductSerializer(product, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+class ProductDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
-    def delete(self, request, id):
-        product = get_object_or_404(Product, pk=id)
+    
+    def delete(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
         if product.orderitems.count() > 0:
             return Response(
-                {'Error': 'Product cannot be deleted because it is associated to a order item.'}, 
+                {'Error': 'Product cannot be deleted because it is associated to an order item.'}, 
                 status=status.HTTP_405_METHOD_NOT_ALLOWED
             )
         else:
@@ -46,21 +38,12 @@ class CollectionList(ListCreateAPIView):
     queryset = Collection.objects.annotate(products_count=Count('products')).all()
     serializer_class = CollectionSerializer
 
+class CollectionDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Collection.objects.annotate(products_count=Count('products'))
+    serializer_class = CollectionSerializer
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def collection_detail(request, id):
-    collection = get_object_or_404(
-        Collection.objects.annotate(products_count=Count('products')), pk=id
-    )
-    if request.method == 'GET':
-        serializer = CollectionSerializer(collection)
-        return Response(serializer.data)
-    elif request.method == 'PUT':
-        serializer = CollectionSerializer(collection, data=request.data)
-        serializer.is_valid()
-        serializer.save()
-        return Response(serializer.data)
-    elif request.method == 'DELETE':
+    def delete(self,request, pk):
+        collection = get_object_or_404(Collection, pk=pk)
         if collection.products.count() > 0:
             return Response(
                 {'error': 'Collection cannot be deleted as it includes one or more product.'},
