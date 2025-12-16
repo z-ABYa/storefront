@@ -1,13 +1,14 @@
 from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework import status
 from .filters import ProductFilter
-from .models import Product, Collection, OrderItem, Review
+from .models import Product, Collection, OrderItem, Review, Cart
 from .pagination import DefaultPagination
-from .serializers import ProductSerializer, CollectionSerializer, ReviewSerializer
+from .serializers import ProductSerializer, CollectionSerializer, ReviewSerializer, CartSerializer
 
 
 class ProductViewSet(ModelViewSet):
@@ -30,6 +31,7 @@ class ProductViewSet(ModelViewSet):
             )
         return super().destroy(request, *args, **kwargs)
 
+
 class CollectionViewSet(ModelViewSet):
     queryset = Collection.objects.annotate(products_count=Count('products')).all()
     serializer_class = CollectionSerializer
@@ -51,3 +53,14 @@ class ReviewViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {'product_id': self.kwargs['product_pk'] }
+    
+
+""" 
+Here at the 'cart/' end-point we don't want all the carts returned
+so we don't want a list of all the carts, as this will expose all our cart IDs
+therefore no GET req. at 'cart/' end-point ==> custom ViewSet with:
+POST[cart/], DELETE[cart/id] and GET[cart/id] a particular cart 
+"""
+class CartViewSet(CreateModelMixin, RetrieveModelMixin, GenericViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
