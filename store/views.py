@@ -62,5 +62,5 @@ therefore no GET req. at 'cart/' end-point ==> custom ViewSet with:
 POST[cart/], DELETE[cart/id] and GET[cart/id] a particular cart 
 """
 class CartViewSet(CreateModelMixin, RetrieveModelMixin, GenericViewSet):
-    queryset = Cart.objects.all()
+    queryset = Cart.objects.prefetch_related('items__product').all()
     serializer_class = CartSerializer
