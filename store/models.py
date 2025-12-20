@@ -72,8 +72,13 @@ class Order(models.Model):
     
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(max_length=1, choices=PAYMENT_STATUS, default=PAYMENT_STATUS_PENDING)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE) 
 
+    class Meta:
+        permissions = [
+            ('cancel_order', 'Can cancel order')
+        ]
+        
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='orderitems')
