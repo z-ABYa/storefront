@@ -11,13 +11,14 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework import status
 from .filters import ProductFilter
-from .models import Product, Collection, OrderItem, Review, Cart, CartItem, Customer
+from .models import Product, Collection, OrderItem, Review, Cart, CartItem, Customer, Order
 from .pagination import DefaultPagination
 from .permissions import IsAdminOrReadOnly, ViewCustomerHistoryPermission
 from .serializers import (ProductSerializer, CollectionSerializer, 
                           ReviewSerializer, CartSerializer, 
                           CartItemSerializer, AddCartItemSerializer,
-                          UpdateCartItemSerializer, CustomerSerializer)
+                          UpdateCartItemSerializer, CustomerSerializer,
+                          OrderSerializer)
 
 
 class ProductViewSet(ModelViewSet):
@@ -120,3 +121,8 @@ class CustomerViewSet(ModelViewSet):
             serializer.save()
             return Response(serializer.data)
             
+
+class OrderViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    
