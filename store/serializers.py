@@ -2,6 +2,7 @@ from decimal import Decimal
 from django.db import transaction
 from rest_framework import serializers
 from .models import Product, Collection, Review, Cart, CartItem, Customer, Order, OrderItem
+from .signals import order_created
 
 
 class CollectionSerializer(serializers.ModelSerializer):
@@ -131,7 +132,7 @@ class CreateOrderSerializer(serializers.Serializer):
     def validate_cart_id(self, cart_id):
         if not Cart.objects.filter(id=cart_id).exists():
             raise serializers.ValidationError('No cart with the given cart id exists.')
-        if CartItem.objects.filter(id=cart_id).count() == 0:
+        if CartItem.objects.filter(cart_id=cart_id).count() == 0:
             raise serializers.ValidationError('The cart is empty.')
         return cart_id
 
@@ -156,5 +157,7 @@ class CreateOrderSerializer(serializers.Serializer):
             OrderItem.objects.bulk_create(order_items)
 
             Cart.objects.filter(pk=cart_id).delete()
+
+            order_created.send_robust(self.__class__, order=order)
 
             return order
