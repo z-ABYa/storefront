@@ -42,9 +42,20 @@ class CollectionAdmin(admin.ModelAdmin):
         )
 
 
+class ProductImageInline(admin.TabularInline):
+    model = models.ProductImage
+    readonly_fields = ['thumbnail']
+
+    def thumbnail(self, instance):
+        if instance.image.name != '':
+            return format_html(f'<img src="{instance.image.url}" class="thumbnail" />')
+        return ''
+    
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     autocomplete_fields = ['collection']
+    inlines = [ProductImageInline]
     prepopulated_fields = {
         'slug':['title']
     }
@@ -64,7 +75,7 @@ class ProductAdmin(admin.ModelAdmin):
         if product.inventory < 10:
             return 'LOW'
         return 'OK' 
-    
+             
     @admin.action(description='Clear Inventory')
     def clear_inventory(self, request, queryset):
         updated_count = queryset.update(inventory=0)
@@ -73,6 +84,11 @@ class ProductAdmin(admin.ModelAdmin):
             f'{updated_count} products were updated successfully.',
             messages.ERROR 
         )
+
+    class Media:
+        css = {
+            'all': ['store/styles.css']
+        }
 
 @admin.register(models.Customer)
 class CustomerAdmin(admin.ModelAdmin):
