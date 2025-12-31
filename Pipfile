@@ -6,9 +6,20 @@ name = "pypi"
 [packages]
 django = "*"
 django-debug-toolbar = "*"
+mysqlclient = "*"
 djangorestframework = "*"
+django-filter = "*"
+djoser = "*"
+djangorestframework-simplejwt = "*"
+pillow = "*"
+django-cors-headers = "*"
+django-templated-mail = "*"
+redis = "*"
+drf-nested-routers = "*"
+celery = "*"
 
 [dev-packages]
+autopep8 = "*"
 
 [requires]
 python_version = "3.12"
