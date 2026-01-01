@@ -17,6 +17,7 @@ django-templated-mail = "*"
 redis = "*"
 drf-nested-routers = "*"
 celery = "*"
+flower = "*"
 
 [dev-packages]
 autopep8 = "*"
