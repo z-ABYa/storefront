@@ -198,3 +198,8 @@ eg:     `serializer.is_valid(raise_exception=True)`
 eg:      `serializer.save()`
         
 > return a suitable response at the end.
+
+
+
+# Automated Testing
+Testing should focus on *behaviour instead of implementations* of a software. This is the key for ensuring that the tests do not fail, if we change the implementations.
