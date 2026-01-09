@@ -212,15 +212,17 @@ LOGGING = {
         "file": {
             "class": "logging.FileHandler",
             "filename": "general.log",
+            "formatter": "verbose",
         },
     },
     "loggers": {
-        ""
-        "handlers": ["console", "file"],
-        "level": os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+        "": {
+            "handlers": ["console", "file"],
+            "level": os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+        }
     },
-    "formatter":{
-        "verbose":{
+    "formatters": {
+        "verbose": {
             "format": "{asctime} ({levelname}) - {name} - {message}",
             "style": "{"
         },
