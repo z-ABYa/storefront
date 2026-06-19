@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #FDFCF7;
+}
+
+/* Page wrapper background overrides to unified cream color (#FDFCF7) */
+.min-h-screen.bg-gray-50,
+.min-h-screen.bg-gray-100,
+.min-h-screen.bg-white,
+.bg-gray-50.min-h-screen,
+.bg-gray-100.min-h-screen,
+.bg-white.min-h-screen {
+  background-color: #FDFCF7 !important;
+  padding-top: 7rem !important;
+}
+
+section.bg-white {
+  background-color: #FDFCF7 !important;
+}
+
+.container {
+  @apply max-w-[96%] mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.max-w-7xl {
+  max-width: 96% !important;
+}
+
+.btn {
+  @apply px-4 py-2 rounded font-semibold transition-colors;
+}
+
+.btn-primary {
+  @apply btn bg-blue-600 text-white hover:bg-blue-700;
+}
+
+.btn-secondary {
+  @apply btn bg-gray-200 text-gray-800 hover:bg-gray-300;
+}
+
+.btn-danger {
+  @apply btn bg-red-600 text-white hover:bg-red-700;
+}
+
+.input-field {
+  @apply w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500;
+}
+
+.error-text {
+  @apply text-red-600 text-sm mt-1;
+}
+
+.success-text {
+  @apply text-green-600 text-sm mt-1;
+}
