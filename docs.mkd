@@ -12,24 +12,24 @@ command as it takes into account the setting of our project too.
 `python3 manage.py startapp playground`
 
 Structure of an application-
-playground
-    |--migrations dir (stores DB queries)
-    |--admin.py (describes how the admin panel for the app is going to look like)
-    |--app.py (config. file)
-    |--models.py (Here we use model classes to pull out data from DB)
-    |--tests.py (for creating tests to save time)
-    |--views.py (view fn that takes a request and returns a response[request handler])
+- `migrations/` (stores DB queries)
+- `admin.py` (describes how the admin panel for the app is going to look like)
+- `app.py` (config. file)
+- `models.py` (Here we use model classes to pull out data from DB)
+- `tests.py` (for creating tests to save time)
+- `views.py` (view fn that takes a request and returns a response[request handler])
 
 Now, after creating an app we need to register it into our project's settings.py in INSTALLED_APPS 'playground'
 
 
 ### Configuring URLs
-We also create a `urls.py` (just convention naming) file in our app for URL config.-
-    -we import views `from . import views" and path "from django.url import path`
-    -and create a list `urlpatterns` (required) in which we specify which view[request] are to be loaded for a particular url page.
+We also create a `urls.py` (just convention naming) file in our app for URL config.
+- we import views `from . import views` and path `from django.url import path`
+- and create a list `urlpatterns` (required) in which we specify which view[request] are to be loaded for a particular url page.
 
 Now we need to tell django to look for urls for a particular app in the `urls.py` we just created inside app directory. We do this by adding this in the main dir.'s `urls.py` file in urlpatterns- 
-    `path('playground/', include('playground.urls'))`
+
+`path('playground/', include('playground.urls'))`
     
 what this will do is chop of the `playground` from the original url and look for the rest in the `playground.urls` file that we just included
 
@@ -43,50 +43,52 @@ After that we use command `python manage.py migrate` to execute the migration fi
 
 ## Database setup
 Install mysqlclient using pip and change default DATABASE settings to [for development server]:
+```Python
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'storefront',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': '<your_password>'
-    } 
-}
-
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'storefront',
+            'HOST': 'localhost',
+            'USER': 'root',
+            'PASSWORD': '<your_password>'
+        } 
+    }
+```
 then apply the migrations (if any) to the newly created mysql DB by running "python manage.py migrate"
 
 
 ## Django ORM (Object Relational Mapper)
 In django we get an ORM that is used to get results from a DB without writing any query. 
+
 Eg.- 
-    `query_set = Product.objects.all()` [Product is inherited from models.Model which is part of ORM]
+    `query_set = Product.objects.all()` (`Product` is inherited from models.Model which is part of ORM)
     gives us a query set for getting all the entries in the Product table but not the result (a list of products) itself.
     It is when we, for eg. iterate over the query set we get the result (this is when the query itself is executed)
     some other scenarios when query is executed - `list(query_set)`, `query_set[0]` or `query_set[:5]`
 
 ### Some query methods
 1. That return a queryset
-    * all() - Returns a query for all the entries in the table
-    * filter() - Returns a new QuerySet containing objects that match the given lookup parameters.
-    * values() - Returns only the specified fields - dictionary form. (eg. values("id", "title"))
-    * order_by() - eg. order_by("-pub_date", "headline")
-    * select_related() - this is used when getting a related field in another table.
+    * `all()` - Returns a query for all the entries in the table
+    * `filter()` - Returns a new QuerySet containing objects that match the given lookup parameters.
+    * `values()` - Returns only the specified fields - dictionary form. (eg. values("id", "title"))
+    * `order_by()` - eg. order_by("-pub_date", "headline")
+    * `select_related()` - this is used when getting a related field in another table.
         eg. if you want to render product.collection.id in template and you use:
             q = Product.objects.all()
         this in itself is fine but when you want to show the collection id in a for-loop it will run a query seperately for each product_id there we use:
             Product.objects.select_related('collection').all()
         This ensures making a QuerySet object of both the table before sending the query.
         When it has 1 instance.(a products has only 1 collection)
-    * prefetch_releted() - similar to select_related() but instance are many (n) 
+    * `prefetch_releted()` - similar to select_related() but instance are many (n) 
 
 
 2. That does not return a queryset (They query the database each time they’re called.)
-    * get() - for a specific condition (eg. id=1)
-    * count() - returns count of objects related to provided cond. (eg. count('*'))
+    * `get()` - for a specific condition (eg. id=1)
+    * `count()` - returns count of objects related to provided cond. (eg. count('*'))
 
+<br><br>
 
-
-
+---
 # APIs & RESTful APIs
 An API(Application Programming Interface) is basically an interface that is provided to a client to get or save data. 
 Analogy - an API is like a remote with multiple buttons, each providing a certain functionality.
@@ -99,53 +101,62 @@ REST (REpresentational State Transfer) defines a bunch of rules for communicatio
 ### 1. Resources
 A resource is like an object in our applicaiton like - `Product`, `Collection`, etc. Now, these resources are available on the web and client applications can access it through URLs(Uniform Resource Locator)
 Eg. -
-http://buy.com/products
-http://buy.com/products/1
-http://buy.com/products/reviews
-http://buy.com/products/reviews/1
+- http://buy.com/products
+- http://buy.com/products/1
+- http://buy.com/products/reviews
+- http://buy.com/products/reviews/1
 
 As we can see all these URls are consistant, that is an attribute of RESTful APIs
 
 ### 2. Resources Representation
-Now we have a resource, located at a certain URL and the server is going to return a representation of that resource. It can return - HTML, XML or JSON. But none of these are internal representation of data on the server. On the server, we identify a resource by an object or instance of a class. 
+Now we have a resource, located at a certain URL and the server is going to return a representation of that resource. It can return - `HTML`, `XML` or `JSON`. But none of these are internal representation of data on the server. On the server, we identify a resource by an object or instance of a class. 
 
 Mostly used notation is JSON (JavaScript Object Notation). So in JSON an object is represented by a pair of curly braces, eg.
-{
-    "name": "abhishek", 
-    "age": 21,
-    "is_online": true,
-    "employer": {},
-    "interests": []
-}
-
+```JSON
+    {
+        "name": "abhishek", 
+        "age": 21,
+        "is_online": true,
+        "employer": {},
+        "interests": []
+    }
+```
 ### 3. HTTP Methods
-    |-- GET - for getting a resource(s)
-    |-- POST - for creating a resource(s)
-    |-- PUT - for updating a resource(s)
-    |-- PATCH - for updating a part of the resource
-    |-- DELETE - for deleting a resource
+- `GET` - for getting a resource(s)
+- `POST` - for creating a resource(s)
+- `PUT` - for updating a resource(s)
+- `PATCH` - for updating a part of the resource
+- `DELETE` - for deleting a resource
 
 Example scenarios-
 1. Let say we want to create a Product:
-    So we should send a POST req. at the '/products' (end point), in the form of JSON object in the body of the req. 
+    So we should send a POST req. at the `/products` (end point), in the form of JSON object in the body of the req. 
+
     `POST /products`
+```JSON
     {
-        "title": '...', 
+        "title": "abc", 
         "price": 10,
         ...
     }
+```
 
 2. Updating a Product:
-    First, we need to ask do we need to update all properties -PUT - or just a subset of them -PATCH. Then send that req. at that URL, eg.
+    First, we need to ask do we need to update all properties -`PUT`, or just a subset of them -`PATCH`. Then send that req. at that URL, eg.
+
     `PATCH /products/1`
+```JSON   
     {
-        "title": '...', 
+        "title": "abc", 
         "price": 20
     }
+```
 
 3. Deleting a Product:
+
     `DELETE /products/1`
-    (Note - we do not need anything in the body of the DELETE req., as the id is already present in the URL.)
+
+    *Note - we do not need anything in the body of the `DELETE` req., as the `id` is already present in the URL.*
 
 
 
